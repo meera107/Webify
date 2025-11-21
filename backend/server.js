@@ -7,6 +7,7 @@ app.use(express.json());
 app.use('/api', require('./routes/templatesRoute'));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api', require('./routes/businessRoutes'));
+app.use('/api', require('./routes/generatorRoutes'));
 
 app.get('/', (req, res) => {
     res.send('Webify Backend is running!');

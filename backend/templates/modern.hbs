@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{business_name}} - {{industry}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            background: #ffffff;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            padding: 1.2rem 0;
+        }
+        
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0066ff;
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        nav a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #0066ff;
+        }
+        
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+            background-size: 50px 50px;
+        }
+        
+        .hero .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            max-width: 700px;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero p {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: #f8f9fa;
+        }
+        
+        .features .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        
+        .feature-card p {
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        /* About Section */
+        .about {
+            padding: 6rem 2rem;
+            background: white;
+        }
+        
+        .about .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .about h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: #1a1a1a;
+        }
+        
+        .about p {
+            font-size: 1.2rem;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Stats Section */
+        .stats {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, {{brand_color}} 0%, {{brand_color}}dd 100%);
+            color: white;
+        }
+        
+        .stats .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+        
+        .stat-item h3 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-item p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 2rem;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+        
+        .cta-section p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 2rem;
+        }
+        
+        footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        footer p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+        
+        footer .social-links {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        
+        footer .social-links a {
+            color: white;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        footer .social-links a:hover {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            {{#if logo_url}}
+            <img src="{{logo_url}}" alt="{{business_name}}" style="height: 40px;">
+            {{else}}
+            <a href="#" class="logo">{{business_name}}</a>
+            {{/if}}
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+<section class="hero" id="home" style="background: linear-gradient(135deg, {{brand_color}} 0%, {{brand_color}}dd 100%) !important;">        <div class="container">
+            <div class="hero-content">
+                <h1>{{business_name}}</h1>
+                {{#if tagline}}
+                <p>{{tagline}}</p>
+                {{else}}
+                <p>Leading the way in {{industry}} with innovative solutions and exceptional service.</p>
+                {{/if}}<a href="#contact" class="cta-button">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose Us</h2>
+                <p>We deliver excellence in every aspect of {{industry}}</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Fast & Efficient</h3>
+                    <p>We deliver results quickly without compromising on quality, ensuring your business stays ahead of the competition.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Goal-Oriented</h3>
+                    <p>Every solution is tailored to meet your specific business objectives and drive measurable success.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Innovative Solutions</h3>
+                    <p>We leverage cutting-edge technology and creative thinking to solve your most complex challenges.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+           <h2>About {{business_name}}</h2>
+            {{#if description}}
+            <p>{{description}}</p>
+            {{else}}
+            <p>We are a leading {{industry}} company committed to delivering exceptional value to our clients. With years of experience and a team of dedicated professionals, we've built a reputation for excellence and innovation.</p>
+            {{/if}}
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+<section class="stats" style="background: linear-gradient(135deg, {{brand_color}} 0%, {{brand_color}}dd 100%) !important;">        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>500+</h3>
+                    <p>Happy Clients</p>
+                </div>
+                <div class="stat-item">
+                    <h3>98%</h3>
+                    <p>Success Rate</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>Support Available</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10+</h3>
+                    <p>Years Experience</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>Ready to Get Started?</h2>
+            <p>Let's discuss how {{business_name}} can help transform your business and achieve your goals.</p>
+            <a href="#" class="cta-button">Contact Us Today</a>
+        </div>
+    </section>
+
+<!-- Contact Section -->
+{{#if e_mail}}
+<section class="contact-info" style="padding: 3rem 2rem; background: white; text-align: center;">
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+        <h2 style="font-size: 2rem; margin-bottom: 2rem;">Get In Touch</h2>
+        <div style="display: grid; gap: 1rem; font-size: 1.1rem; color: #666;">
+            <p><strong>Email:</strong> <a href="mailto:{{e_mail}}" style="color: #667eea;">{{e_mail}}</a></p>
+            {{#if contact_numb}}
+            <p><strong>Phone:</strong> {{contact_numb}}</p>
+            {{/if}}
+            {{#if address}}
+            <p><strong>Address:</strong> {{address}}</p>
+            {{/if}}
+        </div>
+    </div>
+</section>
+{{/if}}
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 {{business_name}}. All rights reserved.</p>
+            <div class="social-links">
+                {{#if linkedin_url}}
+                <a href="{{linkedin_url}}" target="_blank">LinkedIn</a>
+                {{/if}}
+                {{#if facebook_url}}
+                <a href="{{facebook_url}}" target="_blank">Facebook</a>
+                {{/if}}
+                {{#if instagram_url}}
+                <a href="{{instagram_url}}" target="_blank">Instagram</a>
+                {{/if}}
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
