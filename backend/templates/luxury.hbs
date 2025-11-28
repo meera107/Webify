@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{business_name}} - {{industry}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #e8e8e8;
+            line-height: 1.6;
+            background: #0a0a0a;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(200, 170, 110, 0.2);
+            z-index: 1000;
+            padding: 1.5rem 0;
+        }
+        
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: #c8aa6e;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+        }
+        
+        nav a {
+            color: #e8e8e8;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #c8aa6e;
+        }
+        
+        .nav-btn {
+            background: #c8aa6e;
+            color: #0a0a0a;
+            padding: 0.7rem 1.8rem;
+            border-radius: 0;
+            font-weight: 500;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            margin-top: 90px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            background: #0a0a0a;
+            padding: 5rem 3rem;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(200, 170, 110, 0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        
+        .hero .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-content h1 {
+            font-size: 5rem;
+            font-weight: 400;
+            color: #ffffff;
+            margin-bottom: 2rem;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            color: #b8b8b8;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+        
+        .hero-image {
+            position: relative;
+            border-radius: 0;
+            overflow: hidden;
+            background: #1a1a1a;
+            height: 600px;
+        }
+        
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+        }
+        
+        .hero-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            border: 1px solid #c8aa6e;
+            color: #c8aa6e;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+        
+        /* Menu Section */
+        .menu {
+            padding: 7rem 3rem;
+            background: #0f0f0f;
+        }
+        
+        .menu .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 3.5rem;
+            font-weight: 400;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+        
+        .section-header p {
+            color: #b8b8b8;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+        
+        .menu-card {
+            background: #1a1a1a;
+            padding: 0;
+            border-radius: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(200, 170, 110, 0.2);
+        }
+        
+        .menu-card:hover {
+            transform: translateY(-5px);
+            border-color: #c8aa6e;
+        }
+        
+        .menu-image {
+            width: 100%;
+            height: 250px;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        
+        .menu-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .menu-content {
+            padding: 2rem;
+        }
+        
+        .menu-card h3 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+        
+        .menu-card p {
+            color: #b8b8b8;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+        
+        /* About Section */
+        .about {
+            padding: 7rem 3rem;
+            background: #0a0a0a;
+        }
+        
+        .about .container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .about h2 {
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            color: #ffffff;
+            letter-spacing: -1px;
+        }
+        
+        .about p {
+            font-size: 1.15rem;
+            color: #b8b8b8;
+            line-height: 1.9;
+            font-weight: 300;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 7rem 3rem;
+            background: #0f0f0f;
+            text-align: center;
+            border-top: 1px solid rgba(200, 170, 110, 0.2);
+            border-bottom: 1px solid rgba(200, 170, 110, 0.2);
+        }
+        
+        .cta h2 {
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            color: #ffffff;
+        }
+        
+        .cta p {
+            font-size: 1.1rem;
+            color: #b8b8b8;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+        
+        .cta-btn {
+            background: #c8aa6e;
+            color: #0a0a0a;
+            padding: 1rem 3rem;
+            border-radius: 0;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        
+        .cta-btn:hover {
+            background: #d4b87a;
+        }
+        
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            color: #b8b8b8;
+            padding: 3rem;
+            text-align: center;
+        }
+        
+        footer p {
+            font-weight: 300;
+            font-size: 0.9rem;
+        }
+        
+        footer .social-links {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        
+        footer .social-links a {
+            color: #c8aa6e;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero .container,
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">{{business_name}}</div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#menu">Menu</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="#contact" class="nav-btn">Book a Table</a>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">{{industry}}</div>
+                <h1>{{#if tagline}}{{tagline}}{{else}}The Epitome of Luxury Dining{{/if}}</h1>
+                <p>{{#if description}}{{description}}{{else}}Experience the art of fine dining where culinary excellence meets unparalleled service. Every dish tells a story of passion and precision.{{/if}}</p>
+                <a href="#contact" class="cta-btn">Book a Table</a>
+            </div>
+            <div class="hero-image">
+                {{#if logo_url}}
+                <img src="{{logo_url}}" alt="{{business_name}}">
+                {{else}}
+                <div class="hero-placeholder">🍽️</div>
+                {{/if}}
+            </div>
+        </div>
+    </section>
+
+    <section class="menu" id="menu">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our Delicious Menu</h2>
+                <p>Carefully crafted dishes prepared with the finest ingredients</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-card">
+                    <div class="menu-image">🥗</div>
+                    <div class="menu-content">
+                        <h3>Signature Starters</h3>
+                        <p>Begin your culinary journey with our exquisite selection of appetizers crafted to perfection.</p>
+                    </div>
+                </div>
+                <div class="menu-card">
+                    <div class="menu-image">🥩</div>
+                    <div class="menu-content">
+                        <h3>Main Courses</h3>
+                        <p>Indulge in our premium main dishes featuring the finest cuts and freshest ingredients.</p>
+                    </div>
+                </div>
+                <div class="menu-card">
+                    <div class="menu-image">🍰</div>
+                    <div class="menu-content">
+                        <h3>Decadent Desserts</h3>
+                        <p>Complete your experience with our handcrafted desserts that are truly unforgettable.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="container">
+            <h2>About {{business_name}}</h2>
+            <p>{{#if description}}{{description}}{{else}}Our establishment represents the pinnacle of culinary excellence, where tradition meets innovation. Each dish is a masterpiece, crafted with passion and served with pride.{{/if}}</p>
+        </div>
+    </section>
+
+    <section class="cta" id="contact">
+        <div class="container">
+            <h2>Reserve Your Table</h2>
+            <p>Experience unforgettable dining. Book your table today.</p>
+            <a href="#" class="cta-btn">Make Reservation</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 {{business_name}}. All rights reserved.</p>
+            <div class="social-links">
+                {{#if instagram_url}}
+                <a href="{{instagram_url}}" target="_blank">Instagram</a>
+                {{/if}}
+                {{#if facebook_url}}
+                <a href="{{facebook_url}}" target="_blank">Facebook</a>
+                {{/if}}
+                {{#if linkedin_url}}
+                <a href="{{linkedin_url}}" target="_blank">LinkedIn</a>
+                {{/if}}
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

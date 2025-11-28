@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{business_name}} - {{industry}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #2d2d2d;
+            line-height: 1.6;
+            background: #fafafa;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            padding: 1.5rem 0;
+        }
+        
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav .logo {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #1a1a1a;
+            letter-spacing: -0.5px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+        }
+        
+        nav a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #1a1a1a;
+        }
+        
+        .nav-btn {
+            background: #1a1a1a;
+            color: white;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            margin-top: 90px;
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 5rem 3rem;
+        }
+        
+        .hero .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 6rem;
+            align-items: center;
+        }
+        
+        .hero-content h1 {
+            font-size: 4.5rem;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 2rem;
+            line-height: 1.1;
+            letter-spacing: -2px;
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 3rem;
+            line-height: 1.9;
+            font-weight: 300;
+        }
+        
+        .hero-image {
+            position: relative;
+            border-radius: 30px;
+            overflow: hidden;
+            background: #f5f5f5;
+            height: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+        }
+        
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .hero-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0f0f0 0%, #fafafa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+        }
+        
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e5e5;
+        }
+        
+        .trust-badge span {
+            font-size: 0.9rem;
+            color: #999;
+        }
+        
+        /* Services Section */
+        .services {
+            padding: 7rem 3rem;
+            background: #fafafa;
+        }
+        
+        .services .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 3rem;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+        
+        .section-header p {
+            color: #666;
+            font-size: 1.1rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+        
+        .service-card {
+            background: white;
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border-color: transparent;
+        }
+        
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2rem;
+        }
+        
+        .service-card h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        
+        .service-card ul {
+            list-style: none;
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 2;
+            font-weight: 300;
+        }
+        
+        /* About Section */
+        .about {
+            padding: 7rem 3rem;
+            background: white;
+        }
+        
+        .about .container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .about h2 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            letter-spacing: -1px;
+        }
+        
+        .about p {
+            font-size: 1.15rem;
+            color: #666;
+            line-height: 1.9;
+            font-weight: 300;
+        }
+        
+        /* Contact Section */
+        .contact {
+            padding: 7rem 3rem;
+            background: #fafafa;
+        }
+        
+        .contact .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+        
+        .contact-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-card h3 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+        
+        .contact-btn {
+            background: #1a1a1a;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem;
+            text-align: center;
+        }
+        
+        footer p {
+            opacity: 0.6;
+            font-weight: 300;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero .container,
+            .services-grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="logo">{{business_name}}</div>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#contact">FAQs</a></li>
+            </ul>
+            <a href="#contact" class="nav-btn">Book Appointment</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>{{#if tagline}}{{tagline}}{{else}}Exceptional care designed for you{{/if}}</h1>
+                <p>{{#if description}}{{description}}{{else}}Experience personalized {{industry}} services tailored to your unique needs with care, style, and comfort.{{/if}}</p>
+                <a href="#contact" class="nav-btn">Get Started</a>
+                <div class="trust-badge">
+                    <span>Trusted by 500+ happy clients ⭐⭐⭐⭐⭐</span>
+                </div>
+            </div>
+            <div class="hero-image">
+                {{#if logo_url}}
+                <img src="{{logo_url}}" alt="{{business_name}}">
+                {{else}}
+                <div class="hero-placeholder">✨</div>
+                {{/if}}
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <h2>Tailored packages for your needs</h2>
+                <p>Whether you need a quick session or comprehensive care, we have the perfect solution.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💎</div>
+                    <h3>Essential</h3>
+                    <ul>
+                        <li>Comprehensive Service</li>
+                        <li>Professional Care</li>
+                        <li>Quality Products</li>
+                        <li>Expert Guidance</li>
+                        <li>Satisfaction Guaranteed</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">⭐</div>
+                    <h3>Premium</h3>
+                    <ul>
+                        <li>Everything in Essential</li>
+                        <li>Extended Session</li>
+                        <li>Premium Products</li>
+                        <li>Priority Booking</li>
+                        <li>Follow-up Support</li>
+                    </ul>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">👑</div>
+                    <h3>Elite</h3>
+                    <ul>
+                        <li>Everything in Premium</li>
+                        <li>VIP Experience</li>
+                        <li>Luxury Treatment</li>
+                        <li>Personalized Plan</li>
+                        <li>Exclusive Access</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="container">
+            <h2>About {{business_name}}</h2>
+            <p>{{#if description}}{{description}}{{else}}We are dedicated to providing exceptional {{industry}} services with a focus on quality, care, and results. Our experienced team is committed to your satisfaction.{{/if}}</p>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get in touch</h2>
+                <p>Ready to experience our services? We're here to help.</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📅</div>
+                    <h3>Book Online</h3>
+                    <p>Reserve your appointment online</p>
+                    <a href="#" class="contact-btn">Book Now</a>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Call Us</h3>
+                    <p>{{#if phone}}{{phone}}{{else}}Speak to our team{{/if}}</p>
+                    {{#if phone}}
+                    <a href="tel:{{phone}}" class="contact-btn">Call Now</a>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 {{business_name}}. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -17,4 +17,4 @@ const renderTemplate = (templateName, data) => {
     }
 };
 
-module.exports = { renderTemplate };
+module.exports = {renderTemplate} ;
