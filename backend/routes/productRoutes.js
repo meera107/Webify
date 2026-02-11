@@ -1,174 +1,48 @@
 const express = require('express');
 const router = express.Router();
-const supabase = require('../config/supabase');
-const upload = require('../config/upload');
+const productController = require('../controllers/productController');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
-// Upload product image
-router.post('/upload-image', upload.single('image'), (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No image file uploaded' });
+// Configure multer for image uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadDir = 'uploads/products';  // ✅ FIXED: Changed from 'uploads/' to 'uploads/products'
+        
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
         }
         
-        const imageUrl = `/uploads/${req.file.filename}`;
-        
-        res.json({
-            message: 'Image uploaded successfully',
-            imageUrl: imageUrl,
-            filename: req.file.filename
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
-// Create product
-router.post('/products', async (req, res) => {
-    try {
-        console.log('=== POST /products called ===');
-        console.log('Received body:', req.body);
-
-        const {
-            business_id,
-            product_name,
-            description,
-            price,
-            image_url,
-            category
-        } = req.body;
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|gif|webp/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
         
-        // Validate required fields
-        if (!business_id || !product_name) {
-            return res.status(400).json({
-                error: 'business_id and product_name are required'
-            });
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'));
         }
-        
-        const { data, error } = await supabase
-            .from('products')
-            .insert([{
-                business_id: business_id,
-                product_name: product_name,
-                description: description,
-                price: price,
-                image_url: image_url,
-                category: category
-            }])
-            .select();
-        
-        if (error) {
-            return res.status(400).json({ error: error.message });
-        }
-        
-        res.json({
-            message: 'Product created successfully',
-            product: data[0]
-        });
-    } catch (err) {
-        console.error('=== ERROR in POST /products ===');
-        console.error('Error details:', err);
-
-        res.status(500).json({ error: err.message });
     }
 });
 
-// Get all products for a business
-router.get('/products/business/:business_id', async (req, res) => {
-    try {
-        const { business_id } = req.params;
-        
-        const { data, error } = await supabase
-            .from('products')
-            .select('*')
-            .eq('business_id', business_id)
-            .order('created_at', { ascending: false });
-        
-        if (error) {
-            return res.status(400).json({ error: error.message });
-        }
-        
-        res.json(data);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Get single product
-router.get('/products/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        
-        const { data, error } = await supabase
-            .from('products')
-            .select('*')
-            .eq('id', id)
-            .single();
-        
-        if (error) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-        
-        res.json(data);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Update product
-router.put('/products/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const {
-            product_name,
-            description,
-            price,
-            image_url,
-            category
-        } = req.body;
-        
-        const { data, error } = await supabase
-            .from('products')
-            .update({
-                product_name: product_name,
-                description: description,
-                price: price,
-                image_url: image_url,
-                category: category
-            })
-            .eq('id', id)
-            .select();
-        
-        if (error) {
-            return res.status(400).json({ error: error.message });
-        }
-        
-        res.json({
-            message: 'Product updated successfully',
-            product: data[0]
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Delete product
-router.delete('/products/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        
-        const { error } = await supabase
-            .from('products')
-            .delete()
-            .eq('id', id);
-        
-        if (error) {
-            return res.status(400).json({ error: error.message });
-        }
-        
-        res.json({ message: 'Product deleted successfully' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+// Product CRUD Routes
+router.post('/', upload.array('images', 5), productController.createProduct);
+router.get('/:business_id', productController.getProductsByBusinessId);
+router.put('/:id', upload.array('images', 5), productController.updateProduct);
+router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;

@@ -6,6 +6,9 @@
     <title>{{business_name}} - {{industry}}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+        --brand-color: {{#if brand_color}}{{brand_color}}{{else}}#1a1a1a{{/if}};
+    }
         * {
             margin: 0;
             padding: 0;
@@ -66,14 +69,60 @@
         }
         
         .nav-btn {
-            background: #1a1a1a;
+            background: var(--brand-color);
+            text-decoration: none;
             color: white;
             padding: 0.7rem 1.8rem;
             border-radius: 50px;
             font-weight: 500;
             font-size: 0.9rem;
+            border: 2px solid var(--brand-color);
+            transition: background 0.3s, color 0.3s;
+        }
+        .nav-btn:hover {
+            background: none;
+            color: var(--brand-color);
+            border: 2px solid var(--brand-color);
+        }
+
+        nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: {{brand_color}};
+            text-decoration: none;
         }
         
+        nav .logo img {
+            height: 48px;
+            width: auto;
+            border-radius: 8px; 
+        }
+        
+
+.catalog-button {
+            text-decoration: none;
+            color: var(--brand-color);
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 2px solid var(--brand-color);
+            transition: background 0.3s, color 0.3s;
+        }
+        .catalog-button:hover {
+            background: var(--brand-color);
+            color: white;
+        }
+
+        .nav-btn:hover{
+            background: none;
+            color: var(--brand-color);
+            border: 2px solid var(--brand-color);
+        }
+
         /* Hero Section */
         .hero {
             margin-top: 90px;
@@ -205,7 +254,7 @@
         .service-icon {
             width: 70px;
             height: 70px;
-            background: #f5f5f5;
+            background: var(--brand-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -218,7 +267,7 @@
             font-size: 1.4rem;
             font-weight: 500;
             margin-bottom: 1rem;
-            color: #1a1a1a;
+            color: var(--brand-color);
         }
         
         .service-card ul {
@@ -299,7 +348,8 @@
         }
         
         .contact-btn {
-            background: #1a1a1a;
+            background: var(--brand-color);
+            text-decoration: none;
             color: white;
             padding: 0.8rem 2rem;
             border-radius: 50px;
@@ -343,11 +393,17 @@
 <body>
     <nav>
         <div class="container">
-            <div class="logo">{{business_name}}</div>
+            <a href="#" class="logo">
+    {{#if logo_url}}
+        <img src="{{logo_url}}" alt="{{business_name}}">
+    {{else}}
+        {{business_name}}
+    {{/if}}
+</a>
+
             <ul>
                 <li><a href="#about">About</a></li>
                 <li><a href="#services">Services</a></li>
-                <li><a href="#gallery">Gallery</a></li>
                 <li><a href="#contact">FAQs</a></li>
             </ul>
             <a href="#contact" class="nav-btn">Book Appointment</a>
@@ -360,13 +416,14 @@
                 <h1>{{#if tagline}}{{tagline}}{{else}}Exceptional care designed for you{{/if}}</h1>
                 <p>{{#if description}}{{description}}{{else}}Experience personalized {{industry}} services tailored to your unique needs with care, style, and comfort.{{/if}}</p>
                 <a href="#contact" class="nav-btn">Get Started</a>
+                <a href="http://localhost:3000/catalog/{{business_id}}" class="catalog-button">View Catalog →</a>
                 <div class="trust-badge">
-                    <span>Trusted by 500+ happy clients ⭐⭐⭐⭐⭐</span>
+                    <span>Trusted by Many happy clients ⭐⭐⭐⭐⭐</span>
                 </div>
             </div>
             <div class="hero-image">
-                {{#if logo_url}}
-                <img src="{{logo_url}}" alt="{{business_name}}">
+                {{#if hero_image_url}}
+                <img src="{{hero_image_url}}" alt="{{business_name}}">
                 {{else}}
                 <div class="hero-placeholder">✨</div>
                 {{/if}}

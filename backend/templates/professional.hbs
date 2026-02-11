@@ -79,6 +79,7 @@
         
         .nav-btn:hover {
             transform: translateY(-2px);
+            color: black;
             box-shadow: 0 5px 15px {{brand_color}}44;
         }
         
@@ -193,7 +194,45 @@
             justify-content: center;
             font-size: 5rem;
         }
+
+        nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: {{brand_color}};
+            text-decoration: none;
+        }
         
+        nav .logo img {
+            height: 48px;
+            width: auto;
+            border-radius: 8px; 
+        }
+
+            .catalog-button {
+                display: inline-block;
+                text-decoration: none;
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid #fff;
+                box-shadow: 0 0 0 1px #fff inset;
+                padding: 0.8rem 2rem;
+                border-radius: 50px;
+                font-size: 0.85rem;
+                color: white;
+                font-weight: 600;
+                margin-bottom: 2rem;
+                letter-spacing: 0.5px;
+                transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+            }
+
+            .catalog-button:hover {
+                background: white;
+                color: {{brand_color}};
+                box-shadow: 0 5px 15px {{brand_color}}44;
+            }
+
         /* Services Section */
         .services {
             padding: 7rem 2rem;
@@ -495,12 +534,17 @@
 <body>
     <nav>
         <div class="container">
-            <div class="logo">{{business_name}}</div>
+            <a href="#" class="logo">
+    {{#if logo_url}}
+        <img src="{{logo_url}}" alt="{{business_name}}">
+    {{else}}
+        {{business_name}}
+    {{/if}}
+</a>
+
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#services">Services</a></li>
-                <li><a href="#properties">Properties</a></li>
-                <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
             <a href="#contact" class="nav-btn">Contact Us Now</a>
@@ -513,7 +557,7 @@
                 <div class="hero-badge">What We Offer</div>
                 <h1>{{#if tagline}}{{tagline}}{{else}}Find Your Perfect Solution Today{{/if}}</h1>
                 <p>{{#if description}}{{description}}{{else}}We provide upscale solutions, guiding you through every step with personalized expertise that meet your unique needs and elevations.{{/if}}</p>
-                
+                <a href="http://localhost:3000/catalog/{{business_id}}" class="catalog-button">View Catalog →</a>
                 <div class="hero-stats">
                     <div class="stat">
                         <div class="stat-number">200+</div>
@@ -530,8 +574,8 @@
                 </div>
             </div>
             <div class="hero-image">
-                {{#if logo_url}}
-                <img src="{{logo_url}}" alt="{{business_name}}">
+                {{#if hero_image_url}}
+                <img src="{{hero_image_url}}" alt="{{business_name}}">
                 {{else}}
                 <div class="hero-placeholder">🏢</div>
                 {{/if}}
@@ -565,10 +609,9 @@
             </div>
         </div>
     </section>
-
     <section class="about" id="about">
         <div class="container">
-            <div class="about-content">
+            <div class="about-content" style="grid-column: 1 / -1;">
                 <h2>About {{business_name}}</h2>
                 <p>{{#if description}}{{description}}{{else}}We are a leader in our field with decades of experience delivering exceptional results. Our commitment to excellence and customer satisfaction sets us apart in the industry.{{/if}}</p>
                 
@@ -590,9 +633,6 @@
                         <span>Customer Focus</span>
                     </div>
                 </div>
-            </div>
-            <div class="about-image">
-                <div class="hero-placeholder">📊</div>
             </div>
         </div>
     </section>

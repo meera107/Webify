@@ -1,0 +1,184 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "welcomeBack": "Welcome Back",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "loginButton": "Login to Webify",
+    "signupButton": "Create Your Account"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "createBusiness": "Create Business",
+    "myBusinesses": "My Businesses",
+    "profile": "Profile",
+    "settings": "Settings",
+    "language": "Language"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to Webify",
+    "myBusinesses": "My Businesses",
+    "createNew": "Create New Business",
+    "noBusiness": "No businesses yet",
+    "getStarted": "Get started by creating your first business",
+    "businessCount": "businesses"
+  },
+  "business": {
+    "create": "Create Business",
+    "edit": "Edit Business",
+    "delete": "Delete Business",
+    "name": "Business Name",
+    "industry": "Industry",
+    "tagline": "Tagline",
+    "description": "Description",
+    "phone": "Phone Number",
+    "email": "Email Address",
+    "address": "Address",
+    "website": "Website",
+    "brandColor": "Brand Color",
+    "template": "Template",
+    "manageProducts": "Manage Products",
+    "editWebsite": "Edit Website",
+    "viewWebsite": "View Website"
+  },
+  "products": {
+    "title": "Manage Products",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "deleteProduct": "Delete Product",
+    "productName": "Product Name",
+    "description": "Description",
+    "price": "Price",
+    "category": "Category",
+    "image": "Product Image",
+    "noProducts": "No Products Yet",
+    "addFirst": "Add your first product to get started",
+    "shareCatalog": "Share Catalog",
+    "backToDashboard": "Back to Dashboard",
+    "uploadImage": "Upload a product image",
+    "productAdded": "Product added successfully!",
+    "productUpdated": "Product updated successfully!",
+    "productDeleted": "Product deleted successfully!",
+    "confirmDelete": "Are you sure you want to delete this product?"
+  },
+  "catalog": {
+    "publicCatalog": "PUBLIC CATALOG",
+    "allProducts": "All Products",
+    "showing": "Showing",
+    "products": "products",
+    "viewDetails": "View Details",
+    "backToCatalog": "Back to Catalog",
+    "interested": "Interested in this product?",
+    "contactUs": "Contact us for more information or to place an order",
+    "callUs": "Call Us",
+    "emailUs": "Email Us",
+    "whatsappUs": "WhatsApp Us",
+    "noProductsAvailable": "No Products Available",
+    "checkBackSoon": "Check back soon for new products!",
+    "interestedInProducts": "Interested in our products?",
+    "getInTouch": "Get in touch with us for more information"
+  },
+  "editor": {
+    "websiteEditor": "Website Editor",
+    "generalSettings": "General Settings",
+    "about": "About",
+    "services": "Services",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "preview": "Preview",
+    "publish": "Publish",
+    "saveChanges": "Save Changes",
+    "unsavedChanges": "You have unsaved changes"
+  },
+  "templates": {
+    "modern": "Modern",
+    "minimal": "Minimal",
+    "luxury": "Luxury",
+    "professional": "Professional",
+    "selectTemplate": "Select a template for your website"
+  },
+  "messages": {
+    "businessCreated": "Business created successfully!",
+    "businessUpdated": "Business updated successfully!",
+    "businessDeleted": "Business deleted successfully!",
+    "catalogLinkCopied": "Catalog link copied to clipboard!",
+    "shareLinkWith": "Share this link with your clients:",
+    "fillAllFields": "Please fill in all required fields",
+    "errorOccurred": "An error occurred. Please try again."
+  },
+  "home": {
+    "nav": {
+      "login": "Log In",
+      "signup": "Start for Free"
+    },
+    "hero": {
+      "badge": "Simple Website Builder",
+      "title": "Get your business",
+      "titleHighlight": "online today.",
+      "description": "You know your business—we know websites. Just answer a few questions and get a professional site and product catalog instantly.",
+      "cta": "Create My Site",
+      "ctaSecondary": "See Examples"
+    },
+    "themes": {
+      "title": "Themes",
+      "luxury": "Luxury",
+      "minimal": "Minimal",
+      "modern": "Modern",
+      "professional": "Professional"
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "subtitle": "No technical jargon. Just results.",
+      "step1": {
+        "title": "Tell us about your business",
+        "description": "Answer a few simple questions. What do you sell? What is your business name? That's it."
+      },
+      "step2": {
+        "title": "We generate everything",
+        "description": "Our smart tool writes your text, chooses your layout, and organizes your products automatically."
+      },
+      "step3": {
+        "title": "Publish & Share",
+        "description": "Get a link to your new website and a PDF catalog to share with your customers on WhatsApp."
+      }
+    },
+    "feature": {
+      "title": "Not just a website.",
+      "titleHighlight": "A product catalog too.",
+      "description": "Many small businesses need to share prices on WhatsApp or email. We automatically turn your website products into a beautiful PDF catalog you can download instantly.",
+      "benefit1": "Printable format",
+      "benefit2": "Easy to share on mobile",
+      "benefit3": "Always up to date"
+    },
+    "cta": {
+      "title": "Ready to grow your business?",
+      "description": "Join hundreds of other small business owners saving time with Webify. It takes less than 2 minutes to see your first draft.",
+      "button": "Try It For Free"
+    },
+    "footer": {
+      "copyright": "© 2025 Webify. Made for small businesses.",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "support": "Contact Support"
+    }
+  }
+}

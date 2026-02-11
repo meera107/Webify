@@ -1,119 +1,232 @@
 const OpenAI = require('openai');
 
-// Initialize OpenAI client
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY
 });
 
-/**
- * Enhance business description using AI
- * Takes short/basic description and returns professional, detailed version
- */
+/* ======================================================
+   SAFE AI CALL (NEVER THROWS)
+====================================================== */
+const callAI = async (prompt, max_tokens = 150, temperature = 0.7) => {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens,
+      temperature
+    });
+
+    return response.choices?.[0]?.message?.content?.trim() || null;
+  } catch (err) {
+    console.log("❌ OpenAI Error:", err.message);
+    return null; // NEVER throw (important)
+  }
+};
+
+/* ======================================================
+   1. HERO DESCRIPTION
+====================================================== */
 const enhanceDescription = async (businessName, industry, shortDescription) => {
-    try {
-        const prompt = `You are a professional copywriter. 
-        
-Business Name: ${businessName}
+  const prompt = `
+You are a senior brand copywriter.
+
+Rewrite this into a concise, premium business description.
+
+Business: ${businessName}
 Industry: ${industry}
-Current Description: ${shortDescription}
+Input: ${shortDescription}
 
-Write a professional, engaging business description (2-3 paragraphs, ~150 words) that:
-- Sounds professional and trustworthy
-- Highlights expertise in ${industry}
-- Emphasizes value proposition
-- Uses compelling language
-- Is suitable for a business website
+Rules:
+- 25–45 words max
+- Professional but catchy
+- Strong value proposition
+- Avoid generic phrases
+Return ONLY the description.
+`;
 
-Only return the enhanced description, nothing else.`;
+  const text = await callAI(prompt);
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 300,
-            temperature: 0.7
-        });
+  if (!text) return shortDescription;
 
-        return response.choices[0].message.content.trim();
-    } catch (error) {
-        console.error('AI Enhancement Error:', error.message);
-        // Return original if AI fails
-        return shortDescription;
-    }
+  return text;
 };
 
-/**
- * Generate professional tagline using AI
- */
-const generateTagline = async (businessName, industry, description) => {
-    try {
-        const prompt = `Create a professional, catchy tagline for this business:
+/* ======================================================
+   2. TAGLINE
+====================================================== */
+const generateTagline = async (businessName, industry) => {
+  const prompt = `
+Create a catchy, professional tagline.
 
-Business Name: ${businessName}
+Business: ${businessName}
 Industry: ${industry}
-Description: ${description}
 
-Requirements:
-- 5-10 words maximum
-- Memorable and impactful
-- Reflects the business value
+Rules:
+- 4–8 words
+- Premium brand feel
+- No punctuation
+
+Return only the tagline.
+`;
+
+  const text = await callAI(prompt, 40, 0.9);
+
+  if (!text) return `Trusted ${industry} Experts`;
+
+  return text.replace(/['"]/g, '');
+};
+
+/* ======================================================
+   3. HERO PILLS
+====================================================== */
+const generatePills = async (businessName, industry) => {
+  const prompt = `
+Create 3 short, modern highlight phrases.
+
+Business: ${businessName}
+Industry: ${industry}
+
+Rules:
+- 2–3 words each
+- Works for ANY industry
+
+Return ONLY JSON:
+["Phrase 1","Phrase 2","Phrase 3"]
+`;
+
+  const text = await callAI(prompt, 60, 0.9);
+
+  if (!text) {
+    return ["Simply Better", "Trusted Service", "Built Right"];
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return ["Simply Better", "Trusted Service", "Built Right"];
+  }
+};
+
+/* ======================================================
+   4. ABOUT SECTION
+====================================================== */
+const generateAbout = async (businessName, industry) => {
+  const prompt = `
+Write a professional About Us paragraph.
+
+Business: ${businessName}
+Industry: ${industry}
+
+Rules:
+- 2–3 sentences
+- Trust building
 - Professional tone
+- Not salesy
+Return only paragraph.
+`;
 
-Only return the tagline, nothing else.`;
+  const text = await callAI(prompt, 120, 0.7);
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 50,
-            temperature: 0.8
-        });
+  if (!text) {
+    return `${businessName} delivers dependable ${industry} solutions with professionalism, consistency, and attention to detail. Our focus is long-term relationships built on trust, quality, and reliable service.`;
+  }
 
-        return response.choices[0].message.content.trim().replace(/['"]/g, '');
-    } catch (error) {
-        console.error('Tagline Generation Error:', error.message);
-        return `Leading ${industry} Solutions`;
-    }
+  return text;
 };
 
-/**
- * Enhance services list with descriptions
- */
-const enhanceServices = async (services, industry) => {
-    try {
-        const prompt = `You are a professional copywriter. Enhance these service names with brief descriptions:
+/* ======================================================
+   5. SERVICES ENHANCER
+====================================================== */
+const enhanceServices = async (services = [], industry) => {
+  if (!services.length) return [];
 
-Services: ${services.join(', ')}
+  const prompt = `
 Industry: ${industry}
+Services: ${services.join(', ')}
 
-For each service, write a one-sentence description (15-20 words) that explains the value.
+For each service:
+Write a benefit-driven description (12–18 words)
 
-Return ONLY a JSON array in this exact format:
+Return ONLY JSON:
 [
-  {"name": "Service 1", "description": "Brief description here"},
-  {"name": "Service 2", "description": "Brief description here"}
+  {"name":"Service","description":"Text"}
 ]
+`;
 
-Do not include any other text, just the JSON array.`;
+  const text = await callAI(prompt, 350, 0.7);
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: prompt }],
-            max_tokens: 400,
-            temperature: 0.7
-        });
+  if (!text) {
+    return services.map(s => ({
+      name: s,
+      description: "Professional, reliable service tailored to your specific business needs."
+    }));
+  }
 
-        const content = response.choices[0].message.content.trim();
-        // Parse JSON response
-        const enhancedServices = JSON.parse(content);
-        return enhancedServices;
-    } catch (error) {
-        console.error('Services Enhancement Error:', error.message);
-        // Return original services as simple array
-        return services.map(service => ({ name: service, description: '' }));
-    }
+  try {
+    return JSON.parse(text);
+  } catch {
+    return services.map(s => ({
+      name: s,
+      description: "Professional, reliable service tailored to your specific business needs."
+    }));
+  }
 };
 
+/* ======================================================
+   6. UNIVERSAL STATS (NO NUMBERS)
+====================================================== */
+const generateStats = async () => {
+  return [
+    { title: "Trusted", subtitle: "Clients" },
+    { title: "Proven", subtitle: "Results" },
+    { title: "Quality", subtitle: "Driven" }
+  ];
+};
+
+/* ======================================================
+   MASTER GENERATOR (SAFE — NO Promise.all)
+====================================================== */
+const generateAllContent = async ({
+  businessName,
+  industry,
+  description,
+  services = []
+}) => {
+  const heroDescription = await enhanceDescription(
+    businessName,
+    industry,
+    description
+  );
+
+  const tagline = await generateTagline(businessName, industry);
+
+  const pills = await generatePills(businessName, industry);
+
+  const about = await generateAbout(businessName, industry);
+
+  const enhancedServices = await enhanceServices(services, industry);
+
+  const stats = await generateStats();
+
+  return {
+    heroDescription,
+    tagline,
+    pills,
+    about,
+    services: enhancedServices,
+    stats
+  };
+};
+
+/* ======================================================
+   EXPORTS
+====================================================== */
 module.exports = {
-    enhanceDescription,
-    generateTagline,
-    enhanceServices
+  enhanceDescription,
+  generateTagline,
+  generatePills,
+  generateAbout,
+  enhanceServices,
+  generateStats,
+  generateAllContent
 };
