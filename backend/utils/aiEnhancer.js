@@ -1,12 +1,10 @@
+require('dotenv').config();
 const OpenAI = require('openai');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-/* ======================================================
-   SAFE AI CALL (NEVER THROWS)
-====================================================== */
 const callAI = async (prompt, max_tokens = 150, temperature = 0.7) => {
   try {
     const response = await openai.chat.completions.create({
@@ -19,41 +17,47 @@ const callAI = async (prompt, max_tokens = 150, temperature = 0.7) => {
     return response.choices?.[0]?.message?.content?.trim() || null;
   } catch (err) {
     console.log("❌ OpenAI Error:", err.message);
-    return null; // NEVER throw (important)
+    return null; 
   }
 };
 
-/* ======================================================
-   1. HERO DESCRIPTION
-====================================================== */
 const enhanceDescription = async (businessName, industry, shortDescription) => {
+  console.log('🔍 Enhancing description...');
+  console.log('   Original:', shortDescription);
+  
   const prompt = `
-You are a senior brand copywriter.
+You are an expert copywriter.
 
-Rewrite this into a concise, premium business description.
+COMPLETELY REWRITE this business description to sound professional and engaging.
 
 Business: ${businessName}
 Industry: ${industry}
-Input: ${shortDescription}
+Current text: "${shortDescription}"
 
-Rules:
-- 25–45 words max
-- Professional but catchy
-- Strong value proposition
-- Avoid generic phrases
-Return ONLY the description.
+Requirements:
+- 30-50 words
+- Professional and engaging tone
+- Focus on benefits for customers
+- Make it sound premium
+
+Example:
+Input: "sell different customized size of diamond"
+Output: "Discover exquisite diamonds tailored to your exact vision. We specialize in custom-crafted pieces in every size, transforming your dream jewelry into stunning reality with exceptional quality and personalized service."
+
+Now rewrite the text above:
 `;
 
-  const text = await callAI(prompt);
+  const text = await callAI(prompt, 200, 0.8);
 
-  if (!text) return shortDescription;
+  if (!text) {
+    console.log('   ❌ AI failed');
+    return shortDescription;
+  }
 
+  console.log('   ✅ Enhanced:', text);
   return text;
 };
 
-/* ======================================================
-   2. TAGLINE
-====================================================== */
 const generateTagline = async (businessName, industry) => {
   const prompt = `
 Create a catchy, professional tagline.
@@ -76,9 +80,6 @@ Return only the tagline.
   return text.replace(/['"]/g, '');
 };
 
-/* ======================================================
-   3. HERO PILLS
-====================================================== */
 const generatePills = async (businessName, industry) => {
   const prompt = `
 Create 3 short, modern highlight phrases.
@@ -107,9 +108,6 @@ Return ONLY JSON:
   }
 };
 
-/* ======================================================
-   4. ABOUT SECTION
-====================================================== */
 const generateAbout = async (businessName, industry) => {
   const prompt = `
 Write a professional About Us paragraph.
@@ -134,9 +132,6 @@ Return only paragraph.
   return text;
 };
 
-/* ======================================================
-   5. SERVICES ENHANCER
-====================================================== */
 const enhanceServices = async (services = [], industry) => {
   if (!services.length) return [];
 
@@ -172,9 +167,6 @@ Return ONLY JSON:
   }
 };
 
-/* ======================================================
-   6. UNIVERSAL STATS (NO NUMBERS)
-====================================================== */
 const generateStats = async () => {
   return [
     { title: "Trusted", subtitle: "Clients" },
@@ -183,9 +175,6 @@ const generateStats = async () => {
   ];
 };
 
-/* ======================================================
-   MASTER GENERATOR (SAFE — NO Promise.all)
-====================================================== */
 const generateAllContent = async ({
   businessName,
   industry,
@@ -218,9 +207,6 @@ const generateAllContent = async ({
   };
 };
 
-/* ======================================================
-   EXPORTS
-====================================================== */
 module.exports = {
   enhanceDescription,
   generateTagline,
