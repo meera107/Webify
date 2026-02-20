@@ -11,6 +11,11 @@ app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (mobile apps, Postman, etc)
     if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+  'https://webify-z52f.vercel.app',  
+  'https://webify-jet.vercel.app',   
+];
     
     // Allow localhost and any local IP
     if (origin.startsWith('http://localhost:') || 
