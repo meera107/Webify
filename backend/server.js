@@ -20,7 +20,8 @@ app.use(cors({
     // Allow localhost and any local IP
     if (origin.startsWith('http://localhost:') || 
         origin.match(/^http:\/\/192\.168\.\d+\.\d+:\d+$/) ||
-        origin.match(/^http:\/\/10\.\d+\.\d+\.\d+:\d+$/)) {
+        origin.match(/^http:\/\/10\.\d+\.\d+\.\d+:\d+$/)||
+    allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
