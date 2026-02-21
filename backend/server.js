@@ -8,20 +8,7 @@ const app = express();
 
 // Middleware - CORS configuration
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-
-    if (
-      origin.startsWith('http://localhost:') ||
-      origin.match(/^http:\/\/192\.168\.\d+\.\d+:\d+$/) ||
-      origin.match(/^http:\/\/10\.\d+\.\d+\.\d+:\d+$/) ||
-      origin.match(/^https:\/\/webify.*\.vercel\.app$/)
-    ) {
-      return callback(null, true);
-    }
-
-    callback(new Error('Not allowed by CORS'));
-  },
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
