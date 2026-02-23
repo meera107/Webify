@@ -5,6 +5,12 @@
   --foreground: #171717;
 }
 
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
