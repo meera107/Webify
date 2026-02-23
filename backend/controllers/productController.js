@@ -1,24 +1,10 @@
 const supabase = require('../config/supabase');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = 'uploads/products';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'product-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
+// Use memory storage instead of disk storage
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
@@ -33,6 +19,27 @@ const upload = multer({
 });
 
 const uploadMiddleware = upload.array('images', 5);
+
+// Helper to upload image to Supabase Storage
+const uploadToSupabase = async (file, folder) => {
+  const filename = `${folder}-${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+  const filePath = `${folder}/${filename}`;
+
+  const { error } = await supabase.storage
+    .from('uploads')
+    .upload(filePath, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false
+    });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from('uploads')
+    .getPublicUrl(filePath);
+
+  return data.publicUrl;
+};
 
 /**
  * Create Product Controller
@@ -67,11 +74,12 @@ const createProduct = async (req, res) => {
     let images = null;
     
     if (req.files && req.files.length > 0) {
-      const imageUrls = req.files.map(file => `/uploads/products/${file.filename}`);
-      image_url = imageUrls[0]; 
-      images = imageUrls; 
-    } else if (req.file) {
-      image_url = `/uploads/${req.file.filename}`;
+      const imageUrls = await Promise.all(
+        req.files.map(file => uploadToSupabase(file, 'products'))
+      );
+      image_url = imageUrls[0];
+      images = imageUrls;
+      console.log('📸 Images uploaded to Supabase:', imageUrls);
     }
     
     // Insert product into database
@@ -210,7 +218,6 @@ const updateProduct = async (req, res) => {
 
     console.log('📋 Current product:', currentProduct.product_name);
     console.log('📸 Current image_url:', currentProduct.image_url);
-    console.log('🖼️ Current images array:', currentProduct.images);
 
     const updateData = {};
     
@@ -235,21 +242,18 @@ const updateProduct = async (req, res) => {
       }
       updateData.price = parsedPrice;
     }
+
     if (req.files && req.files.length > 0) {
-      const imageUrls = req.files.map(file => `/uploads/products/${file.filename}`);
+      const imageUrls = await Promise.all(
+        req.files.map(file => uploadToSupabase(file, 'products'))
+      );
       updateData.image_url = imageUrls[0];
       updateData.images = imageUrls;
-      console.log('📸 New images uploaded:', imageUrls.length);
-      console.log('📸 New image_url:', updateData.image_url);
-      console.log('🖼️ New images array:', updateData.images);
-    } else if (req.file) {
-      updateData.image_url = `/uploads/${req.file.filename}`;
-      console.log('📸 New single image uploaded:', req.file.filename);
+      console.log('📸 New images uploaded to Supabase:', imageUrls.length);
     } else {
       updateData.image_url = currentProduct.image_url;
       updateData.images = currentProduct.images;
-      console.log('📸 No new images - preserving existing image_url:', updateData.image_url);
-      console.log('🖼️ No new images - preserving existing images array:', updateData.images);
+      console.log('📸 No new images - preserving existing');
     }
 
     console.log('💾 Final update data:', updateData);
@@ -274,9 +278,7 @@ const updateProduct = async (req, res) => {
     }
     
     console.log('✅ Product updated successfully');
-    console.log('📋 Updated product:', data[0].product_name);
     console.log('📸 Final image_url in DB:', data[0].image_url);
-    console.log('🖼️ Final images array in DB:', data[0].images);
     
     res.json({
       message: 'Product updated successfully',
@@ -303,16 +305,6 @@ const deleteProduct = async (req, res) => {
       });
     }
   
-    const { data: product, error: fetchError } = await supabase
-      .from('products')
-      .select('image_url, images')
-      .eq('id', id)
-      .single();
-
-    if (fetchError) {
-      console.error('⚠️ Fetch error:', fetchError);
-    }
-    
     const { error } = await supabase
       .from('products')
       .delete()
@@ -325,39 +317,7 @@ const deleteProduct = async (req, res) => {
       });
     }
     
-    if (product) {
-      const fs = require('fs');
-      const path = require('path');
-
-      if (product.image_url) {
-        try {
-          const imagePath = path.join(__dirname, '..', product.image_url);
-          if (fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
-            console.log('✅ Deleted main image:', imagePath);
-          }
-        } catch (err) {
-          console.error('⚠️ Failed to delete main image:', err.message);
-        }
-      }
-
-      // Delete additional images
-      if (product.images && Array.isArray(product.images)) {
-        product.images.forEach(img => {
-          try {
-            const imgPath = path.join(__dirname, '..', img);
-            if (fs.existsSync(imgPath)) {
-              fs.unlinkSync(imgPath);
-              console.log('✅ Deleted additional image:', imgPath);
-            }
-          } catch (err) {
-            console.error('⚠️ Failed to delete image:', err.message);
-          }
-        });
-      }
-    }
-    
-    console.log('✅ Product deleted successfully (including files)');
+    console.log('✅ Product deleted successfully');
     
     res.json({ 
       message: 'Product deleted successfully' 
