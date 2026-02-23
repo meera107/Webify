@@ -115,13 +115,14 @@ export default function EditBusinessPage() {
             </div>
             <div className="flex items-center gap-3">
               {/* ✅ FIXED: was using broken template literal */}
-              <a 
+                <a 
                 href={`${API_URL}/api/preview/${businessId}/${business.template_name || 'modern'}?t=${Date.now()}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-gray-900 hover:bg-gray-900 rounded-lg font-medium">
+                className="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium transition-colors duration-150 hover:bg-gray-600 hover:text-white"
+                >
                 View Live Site
-              </a>
+                </a>
               <button 
                 onClick={handleSave} 
                 disabled={saving} 

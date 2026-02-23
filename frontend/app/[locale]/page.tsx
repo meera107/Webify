@@ -1,5 +1,4 @@
 import {useTranslations} from 'next-intl';
-import LanguageSwitcher from '../components/LanguageSwitcher';
 
 export default function HomePage({
   params
@@ -24,7 +23,6 @@ export default function HomePage({
             
             {/* Buttons */}
             <div className="flex gap-4 items-center">
-              <LanguageSwitcher />
               <a href="/login" className="text-stone-600 hover:text-emerald-700 px-4 py-2 text-sm font-semibold transition-colors">
                 {t('nav.login')}
               </a>
