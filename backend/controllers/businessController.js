@@ -1,44 +1,16 @@
 const supabase = require('../config/supabase');
 const { generateAllContent } = require('../utils/aiEnhancer');
-
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
-// Create uploads/logos directory if it doesn't exist
-const logosDir = path.join(__dirname, '../uploads/logos');
-if (!fs.existsSync(logosDir)) {
-  fs.mkdirSync(logosDir, { recursive: true });
-}
-
-const heroDir = path.join(__dirname, '../uploads/hero');
-if (!fs.existsSync(heroDir)) {
-  fs.mkdirSync(heroDir, { recursive: true });
-}
-
-// Configure multer for logo upload
-const logoStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    if (file.fieldname === 'hero_image') {
-      cb(null, heroDir);
-    } else {
-      cb(null, logosDir);
-    }
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const uploadLogo = multer({
-  storage: logoStorage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+// Use memory storage instead of disk storage
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-    
     if (extname && mimetype) {
       cb(null, true);
     } else {
@@ -50,13 +22,33 @@ const uploadLogo = multer({
   { name: 'hero_image', maxCount: 1 }
 ]);
 
+// Helper to upload image to Supabase Storage
+const uploadToSupabase = async (file, folder) => {
+  const filename = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+  const filePath = `${folder}/${filename}`;
+
+  const { error } = await supabase.storage
+    .from('uploads')
+    .upload(filePath, file.buffer, {
+      contentType: file.mimetype,
+      upsert: false
+    });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage
+    .from('uploads')
+    .getPublicUrl(filePath);
+
+  return data.publicUrl;
+};
+
 /**
  * Create Business Controller
  * Creates a new business with optional AI content enhancement and logo upload
  */
 const createBusiness = async (req, res) => {
-  // Handle file upload first
-  uploadLogo(req, res, async (uploadErr) => {
+  upload(req, res, async (uploadErr) => {
     if (uploadErr) {
       return res.status(400).json({ error: uploadErr.message });
     }
@@ -82,13 +74,15 @@ const createBusiness = async (req, res) => {
       
       const shouldUseAI = use_ai === 'true' || use_ai === true; 
 
-      const logo_url = req.files?.logo?.[0]?.filename
-        ? `/uploads/logos/${req.files.logo[0].filename}`
-        : null;
+      let logo_url = null;
+      let hero_image_url = null;
 
-      const hero_image_url = req.files?.hero_image?.[0]?.filename
-        ? `/uploads/hero/${req.files.hero_image[0].filename}`
-        : null;
+      if (req.files?.logo?.[0]) {
+        logo_url = await uploadToSupabase(req.files.logo[0], 'logos');
+      }
+      if (req.files?.hero_image?.[0]) {
+        hero_image_url = await uploadToSupabase(req.files.hero_image[0], 'hero');
+      }
 
       console.log('📸 LOGO:', logo_url);
       console.log('🖼️  HERO:', hero_image_url);
@@ -213,9 +207,7 @@ const createBusiness = async (req, res) => {
       
       if (error) {
         console.error('❌ Database error:', error);
-        return res.status(400).json({ 
-          error: error.message 
-        });
+        return res.status(400).json({ error: error.message });
       }
       
       console.log('✅ Business created successfully with ID:', data[0].id);
@@ -228,9 +220,7 @@ const createBusiness = async (req, res) => {
       
     } catch (err) {
       console.error('❌ Create business error:', err);
-      res.status(500).json({ 
-        error: 'Failed to create business' 
-      });
+      res.status(500).json({ error: 'Failed to create business' });
     }
   });
 };
@@ -243,11 +233,8 @@ const getBusinessById = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // Validate ID
     if (!id) {
-      return res.status(400).json({ 
-        error: 'Business ID is required' 
-      });
+      return res.status(400).json({ error: 'Business ID is required' });
     }
     
     const { data, error } = await supabase
@@ -257,18 +244,14 @@ const getBusinessById = async (req, res) => {
       .single();
     
     if (error || !data) {
-      return res.status(404).json({ 
-        error: 'Business not found' 
-      });
+      return res.status(404).json({ error: 'Business not found' });
     }
     
     res.json(data);
     
   } catch (err) {
     console.error('Get business error:', err);
-    res.status(500).json({ 
-      error: 'Failed to fetch business' 
-    });
+    res.status(500).json({ error: 'Failed to fetch business' });
   }
 };
 
@@ -280,14 +263,10 @@ const getBusinessesByUserId = async (req, res) => {
   try {
     const { user_id } = req.params;
     
-    // Validate user_id
     if (!user_id) {
-      return res.status(400).json({ 
-        error: 'User ID is required' 
-      });
+      return res.status(400).json({ error: 'User ID is required' });
     }
     
-    // Get all businesses for user
     const { data: businesses, error: businessError } = await supabase
       .from('business')
       .select('*')
@@ -296,47 +275,36 @@ const getBusinessesByUserId = async (req, res) => {
     
     if (businessError) {
       console.error('Database error:', businessError);
-      return res.status(400).json({ 
-        error: businessError.message 
-      });
+      return res.status(400).json({ error: businessError.message });
     }
 
-    // If no businesses, return empty array
     if (!businesses || businesses.length === 0) {
-      return res.json({
-        businesses: [],
-        count: 0
-      });
+      return res.json({ businesses: [], count: 0 });
     }
 
-    // Get REAL product counts for each business from your products table
     const businessIds = businesses.map(b => b.id);
     
     let productsCount = {};
     
-    // Query your actual products table in Supabase
     const { data: products, error: productsError } = await supabase
       .from('products')
       .select('business_id')
       .in('business_id', businessIds);
 
     if (!productsError && products) {
-      // Count products per business
       productsCount = products.reduce((acc, product) => {
         acc[product.business_id] = (acc[product.business_id] || 0) + 1;
         return acc;
       }, {});
-      
       console.log('✅ Product counts fetched:', productsCount);
     } else {
       console.log('⚠️ No products found or error:', productsError);
     }
 
-    // Add REAL product_count to each business
     const businessesWithCounts = businesses.map(business => ({
       ...business,
       products_count: productsCount[business.id] || 0,
-      views: 0 // Placeholder for future view tracking
+      views: 0
     }));
     
     console.log(`✅ Returning ${businessesWithCounts.length} businesses with product counts`);
@@ -348,14 +316,12 @@ const getBusinessesByUserId = async (req, res) => {
     
   } catch (err) {
     console.error('❌ Get businesses error:', err);
-    res.status(500).json({ 
-      error: 'Failed to fetch businesses' 
-    });
+    res.status(500).json({ error: 'Failed to fetch businesses' });
   }
 };
 
 const updateBusiness = async (req, res) => {
-  uploadLogo(req, res, async (uploadErr) => {
+  upload(req, res, async (uploadErr) => {
     if (uploadErr) {
       return res.status(400).json({ error: uploadErr.message });
     }
@@ -364,9 +330,7 @@ const updateBusiness = async (req, res) => {
       const { id } = req.params;
       
       if (!id) {
-        return res.status(400).json({ 
-          error: 'Business ID is required' 
-        });
+        return res.status(400).json({ error: 'Business ID is required' });
       }
 
       console.log('📝 Updating business:', id);
@@ -381,31 +345,20 @@ const updateBusiness = async (req, res) => {
 
       if (fetchError) {
         console.error('❌ Fetch error:', fetchError);
-        return res.status(404).json({ 
-          error: 'Business not found' 
-        });
+        return res.status(404).json({ error: 'Business not found' });
       }
 
       console.log('📸 Current logo in DB:', currentBusiness.logo_url);
       console.log('🖼️ Current hero in DB:', currentBusiness.hero_image_url);
+
       const updateData = {};
       const allowedFields = [
-        'business_name',
-        'industry',
-        'tagline',
-        'description',
-        'services',
-        'email',
-        'phone',
-        'address',
-        'linkedin_url',
-        'instagram_url',
-        'facebook_url',
-        'brand_color',
-        'template_name'
+        'business_name', 'industry', 'tagline', 'description',
+        'services', 'email', 'phone', 'address',
+        'linkedin_url', 'instagram_url', 'facebook_url',
+        'brand_color', 'template_name'
       ];
 
-      // Add fields from request body
       allowedFields.forEach(field => {
         if (req.body[field] !== undefined && req.body[field] !== null && req.body[field] !== 'null') {
           updateData[field] = req.body[field];
@@ -413,28 +366,23 @@ const updateBusiness = async (req, res) => {
       });
 
       if (req.files?.logo?.[0]) {
-        // New logo uploaded
-        updateData.logo_url = `/uploads/logos/${req.files.logo[0].filename}`;
-        console.log('📸 New logo uploaded:', updateData.logo_url);
+        updateData.logo_url = await uploadToSupabase(req.files.logo[0], 'logos');
+        console.log('📸 New logo uploaded to Supabase:', updateData.logo_url);
       } else {
-        // No new logo, keep existing one
         updateData.logo_url = currentBusiness.logo_url;
         console.log('📸 Keeping existing logo:', updateData.logo_url);
       }
 
       if (req.files?.hero_image?.[0]) {
-        // New hero uploaded
-        updateData.hero_image_url = `/uploads/hero/${req.files.hero_image[0].filename}`;
-        console.log('🖼️ New hero image uploaded:', updateData.hero_image_url);
+        updateData.hero_image_url = await uploadToSupabase(req.files.hero_image[0], 'hero');
+        console.log('🖼️ New hero image uploaded to Supabase:', updateData.hero_image_url);
       } else {
-        // No new hero, keep existing one
         updateData.hero_image_url = currentBusiness.hero_image_url;
         console.log('🖼️ Keeping existing hero:', updateData.hero_image_url);
       }
 
       console.log('💾 Final data to update:', updateData);
 
-      // Update business in database
       const { data, error } = await supabase
         .from('business')
         .update(updateData)
@@ -444,15 +392,11 @@ const updateBusiness = async (req, res) => {
 
       if (error) {
         console.error('❌ Database error:', error);
-        return res.status(400).json({ 
-          error: error.message 
-        });
+        return res.status(400).json({ error: error.message });
       }
 
       if (!data) {
-        return res.status(404).json({ 
-          error: 'Business not found' 
-        });
+        return res.status(404).json({ error: 'Business not found' });
       }
 
       console.log('✅ Business updated successfully');
@@ -466,9 +410,7 @@ const updateBusiness = async (req, res) => {
       
     } catch (err) {
       console.error('❌ Update business error:', err);
-      res.status(500).json({ 
-        error: 'Failed to update business' 
-      });
+      res.status(500).json({ error: 'Failed to update business' });
     }
   });
 };
@@ -477,11 +419,8 @@ const deleteBusiness = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate ID
     if (!id) {
-      return res.status(400).json({ 
-        error: 'Business ID is required' 
-      });
+      return res.status(400).json({ error: 'Business ID is required' });
     }
 
     const { data: business, error: fetchError } = await supabase
@@ -494,7 +433,6 @@ const deleteBusiness = async (req, res) => {
       console.error('❌ Fetch error:', fetchError);
     }
 
-    // Delete business
     const { error } = await supabase
       .from('business')
       .delete()
@@ -502,56 +440,17 @@ const deleteBusiness = async (req, res) => {
 
     if (error) {
       console.error('Database error:', error);
-      return res.status(400).json({ 
-        error: error.message 
-      });
+      return res.status(400).json({ error: error.message });
     }
 
-    if (business) {
-      const fs = require('fs');
-      const path = require('path');
-
-      // Delete logo file
-      if (business.logo_url) {
-        try {
-          const logoPath = path.join(__dirname, '..', business.logo_url);
-          if (fs.existsSync(logoPath)) {
-            fs.unlinkSync(logoPath);
-            console.log('✅ Deleted logo file:', logoPath);
-          }
-        } catch (err) {
-          console.error('⚠️ Failed to delete logo:', err.message);
-        }
-      }
-
-      // Delete hero image file
-      if (business.hero_image_url) {
-        try {
-          const heroPath = path.join(__dirname, '..', business.hero_image_url);
-          if (fs.existsSync(heroPath)) {
-            fs.unlinkSync(heroPath);
-            console.log('✅ Deleted hero image:', heroPath);
-          }
-        } catch (err) {
-          console.error('⚠️ Failed to delete hero image:', err.message);
-        }
-      }
-    }
-
-    console.log('✅ Business deleted successfully (including files)');
-
-    res.json({ 
-      message: 'Business deleted successfully' 
-    });
+    console.log('✅ Business deleted successfully');
+    res.json({ message: 'Business deleted successfully' });
     
   } catch (err) {
     console.error('Delete business error:', err);
-    res.status(500).json({ 
-      error: 'Failed to delete business' 
-    });
+    res.status(500).json({ error: 'Failed to delete business' });
   }
 };
- 
 
 module.exports = {
   createBusiness,
