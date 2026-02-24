@@ -16,9 +16,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Webify - Create Websites Instantly",
-  description: "Generate professional websites for your business in minutes",
+  title: 'Webify - Create Websites Instantly',
+  description: 'Generate professional websites for your business in minutes',
+  openGraph: {
+    title: 'Webify - Create Websites Instantly',
+    description: 'Generate professional websites for your business in minutes',
+    images: ['/og-image.png'],
+  },
 };
+
 
 export default async function RootLayout({
   children,
