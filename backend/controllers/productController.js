@@ -22,7 +22,7 @@ const uploadMiddleware = upload.array('images', 5);
 
 // Helper to upload image to Supabase Storage
 const uploadToSupabase = async (file, folder) => {
-  const filename = `${folder}-${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+  const filename = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
   const filePath = `${folder}/${filename}`;
 
   const { error } = await supabase.storage
