@@ -1,4 +1,5 @@
 const supabase = require('../config/supabase');
+const { supabaseAdmin } = require('../config/supabase');
 const { generateAllContent } = require('../utils/aiEnhancer');
 const multer = require('multer');
 const path = require('path');
