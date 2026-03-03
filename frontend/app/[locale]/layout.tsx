@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Webify - Create Websites Instantly',
+  manifest: '/manifest.json',
   description: 'Generate professional websites for your business in minutes',
   openGraph: {
     title: 'Webify - Create Websites Instantly',
@@ -49,7 +50,21 @@ export default async function RootLayout({
     <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >return (
+    <html lang={locale}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#000000" />
+      </head>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>

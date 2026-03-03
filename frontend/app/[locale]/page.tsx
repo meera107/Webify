@@ -1,4 +1,5 @@
 import {useTranslations} from 'next-intl';
+import InstallButton from '../InstallButton';
 
 export default function HomePage({
   params
@@ -29,6 +30,7 @@ export default function HomePage({
               <a href="/signup" className="bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-all shadow-sm">
                 {t('nav.signup')}
               </a>
+              <InstallButton />
             </div>
           </div>
         </div>
