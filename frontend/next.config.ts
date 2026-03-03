@@ -18,7 +18,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  outputFileTracingRoot: require('path').join(__dirname, '../../'),
 }
 
 export default withPWA(withNextIntl(nextConfig))
